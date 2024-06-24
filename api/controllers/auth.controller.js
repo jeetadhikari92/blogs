@@ -1,11 +1,12 @@
 import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
+import { errorHandler } from "../utils/error.js"
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   const { username, email, password } = req.body
 
   if (!username || !email || !password) {
-    res.status(400).send({ message: "Bad request" })
+    next(errorHandler(400, "All fields are required"))
     return
   }
 
@@ -16,6 +17,6 @@ export const signup = async (req, res) => {
     await user.save()
     res.status(201).json({ message: "User created" })
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    next(err)
   }
 }
